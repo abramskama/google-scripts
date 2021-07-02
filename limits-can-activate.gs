@@ -60,7 +60,7 @@ function getResult(resultColumn, resultRow) {
 
   var resultRaw = sheet.getDataRange().getCell(resultRow, resultColumn).getValue().toString();
   
-  if (resultRaw != 'нет' && resultRaw != 'да') {
+  if (resultRaw != 'нет' && resultRaw != 'да'&& resultRaw != 'Да') {
     throw "error 3: " + resultRaw;
   }
 
@@ -71,6 +71,43 @@ function getResult(resultColumn, resultRow) {
 
   var text =  
     tab4 + "'Результат' => " + result + ",\n";
+
+  return text;
+}
+
+/**
+ * @customFunction
+ */
+function getLimits(limitsColumn, limitsRow) {
+  var sheet = SpreadsheetApp.getActive();
+
+  var limitsCellValue = sheet.getDataRange().getCell(limitsRow, limitsColumn).getValue().toString();
+  var limitsRaw = limitsCellValue.toString().split('\n');
+
+  var limits = {
+    "arenda": 0,
+    "homes": 0,
+  };
+  for(i = 0; i <= limitsRaw.length - 1; i++) {
+    var columnValues = limitsRaw[i].toString().split(' ')
+
+    if (columnValues.length != 4 && columnValues.length != 5) {
+      throw "error 1: " + columnValues.join();
+    }
+
+    var limitValue = columnValues[columnValues.length - 1];
+
+    if (columnValues.length == 4) {
+      limits.arenda = limitValue
+    } else {
+      limits.homes = limitValue
+    }
+  }
+
+  var text =  
+    tab4 + "'Предусловие - платные лимиты' => [\n" +
+    tab4 + tab + "'zone1' => ['homes' => " + limits.homes + ", 'arenda' => " + limits.arenda + "],,\n" +
+    tab4 + "],\n";
 
   return text;
 }
